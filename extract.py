@@ -10,6 +10,7 @@ import csv
 from requests.exceptions import InvalidSchema
 import socket
 from datetime import datetime, time
+import logging
 
 import geoip2.database
 
@@ -536,13 +537,21 @@ df_legitimate = pd.read_json("https://raw.githubusercontent.com/ebubekirbbr/pdd/
 df_legitimate = df_legitimate
 results = []
 
+# Logging
+logfile_name = "url.log"
+logging.basicConfig(format='%(asctime)s - %(levelname)s : %(message)s',
+                        datefmt='%Y-%m/%dT%H:%M:%S',
+                        filename=logfile_name,
+                        level=logging.INFO)
 # Legit
 for url in df_legitimate[0]:
+
     url_https = url
     if not url.startswith('http'):
         url = "http://" + url
         url_https = "https://" + url.split("//")[1]
-    print(url)
+    logging.info(url)
+
     try:
         results.append(main(url_https, "Legitimate"))
     except InvalidSchema as err:
@@ -568,13 +577,14 @@ with open("legit_features.tsv", 'w') as f:
 
 
 # Phishing URLs
+
 for url in df_phishing[0]:
     url_https = url
     if not url.startswith('http'):
         url = "http://" + url
         url_https = "https://" + url.split("//")[1]
     
-    print(url_https)
+    logging.info(url_https)
     try:
         results.append(main(url_https, "Phishing"))
     except InvalidSchema as err:
