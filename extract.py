@@ -11,10 +11,6 @@ from requests.exceptions import InvalidSchema
 import socket
 from datetime import datetime, time
 
-import dask.dataframe as dd
-from dask.multiprocessing import get
-
-
 import geoip2.database
 
 
