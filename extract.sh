@@ -1,6 +1,7 @@
 sudo apt install whois
 sudo apt install netbase
 
+pip3 install -r requirements.txt
 pip3 install whois timeout-decorator beautifulsoup4 geoip2 tldextract
 
 wget https://raw.githubusercontent.com/Acquil/PhishingWebsitePredictor/master/PhishingWebsitePredictor/GeoLite2-ASN.mmdb
