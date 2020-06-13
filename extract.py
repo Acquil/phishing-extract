@@ -438,19 +438,23 @@ def check_popup_js(soup):
 # autonomous system
 def get_asn_org(reader_obj, url_addr):
     domain = tldextract.extract(url_addr).fqdn
-
-    ip = socket.gethostbyname(domain)
-    response = reader_obj.asn(ip)
-    return response.autonomous_system_organization
+    try:
+        ip = socket.gethostbyname(domain)
+        response = reader_obj.asn(ip)
+        return response.autonomous_system_organization
+    except:
+        return "NA"
 
 # country code
 def get_domain_reg_country_code(reader_obj, url_addr):
-    domain = tldextract.extract(url_addr).fqdn
+    try:
+        domain = tldextract.extract(url_addr).fqdn
 
-    ip = socket.gethostbyname(domain)
-    response = reader_obj.country(ip)
-    return response.country.name
-
+        ip = socket.gethostbyname(domain)
+        response = reader_obj.country(ip)
+        return response.country.name
+    except:
+        return "NA"
 
 label_ip_address = {}
 
@@ -506,21 +510,21 @@ def main(url, result):
     status.append(get_domain_reg_country_code(country_reader, url))
 
     domain = tldextract.extract(url).fqdn
-    dns = 1
-    try:
-        domain = whois.query(hostname)
-    except Exception as err:
-        print(err)
-        dns = -1
+#    dns = 1
+#    try:
+#        domain = whois.query(hostname)
+#    except Exception as err:
+#        print(err)
+#        dns = -1
 
     status.append(https_token(url))
-    status.append("DNS unsuccessful" if dns == -1 else domain_registration_length(domain))
+#    status.append("DNS unsuccessful" if dns == -1 else domain_registration_length(domain))
     # status.append(age_of_domain(domain))
     status.append(favicon(url, soup, hostname))
-    if dns==1:
-        status.append(abnormal_url(domain.name, url))
-    else:
-        status.append(abnormal_url(domain, url))
+#    if dns==1:
+#        status.append(abnormal_url(domain.name, url))
+#    else:
+#        status.append(abnormal_url(domain, url))
 
     status.append(url_of_anchor(url, soup, hostname))
     status.append(links_in_tags(url, soup, hostname))
@@ -533,19 +537,19 @@ def main(url, result):
 
 
 df_phishing = pd.read_json("https://raw.githubusercontent.com/ebubekirbbr/pdd/master/input/data_phishing_37175.json")
-df_legitimate = pd.read_json("https://raw.githubusercontent.com/ebubekirbbr/pdd/master/input/data_legitimate_36400.json")
+#df_legitimate = pd.read_json("https://raw.githubusercontent.com/ebubekirbbr/pdd/master/input/data_legitimate_36400.json")
 
-df_legitimate = df_legitimate
+#df_legitimate = df_legitimate
 results = []
 
 # Logging
-logfile_name = "url.log"
-logging.basicConfig(format='%(asctime)s - %(levelname)s : %(message)s',
+logfile_name = "url_phishing_2.log"
+logging.basicConfig(format='%(message)s',
                         datefmt='%Y-%m/%dT%H:%M:%S',
                         filename=logfile_name,
                         level=logging.INFO)
 # Legit
-for url in df_legitimate[0]:
+'''for url in df_legitimate[0]:
 
     url_https = url
     if not url.startswith('http'):
@@ -565,7 +569,8 @@ for url in df_legitimate[0]:
 transactions = []
 for row in results:
     transactions.append(tuple(map(str, row)))
-
+'''
+'''
 with open("legit_features.tsv", 'w') as f:
 #     for key in phishing.keys():
 #         f.write(str(key) + ",")
@@ -576,18 +581,20 @@ with open("legit_features.tsv", 'w') as f:
 
         f.write(str('\n'))
 
-
+'''
 # Phishing URLs
 
-for url in df_phishing[0]:
+for url in df_phishing[0].tail(10000):
     url_https = url
     if not url.startswith('http'):
         url = "http://" + url
         url_https = "https://" + url.split("//")[1]
-    
-    logging.info(url_https)
+
+    #logging.info(url_https)
     try:
-        results.append(main(url_https, "Phishing"))
+        x= main(url_https, "Phishing")
+        logging.info(x)
+        results.append(x)
     except InvalidSchema as err:
         print(err, " in __main__ phishing")
         results.append(main(url, "Phishing"))
