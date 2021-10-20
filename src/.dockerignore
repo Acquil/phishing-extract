@@ -1,0 +1,4 @@
+setup.sh
+.venv
+Dockerfile
+*.zip
