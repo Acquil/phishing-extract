@@ -18,7 +18,7 @@ requests==2.23.0
 requests-file==1.4.3
 scikit-learn==0.22.2.post1
 scipy==1.4.1
-setuptools==39.0.1
+setuptools==65.5.1
 six==1.14.0
 sklearn==0.0
 soupsieve==2.0
